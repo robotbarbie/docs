@@ -1,0 +1,239 @@
+openapi: 3.0.0
+info:
+  title: Sol API
+  description: API for managing AI-powered tool integrations in third-party applications, enabling seamless automation and execution of tasks.
+  version: 1.0.0
+servers:
+  - url: https://api.sol.com/v1
+    description: Main (production) server
+
+paths:
+  /auth/client:
+    post:
+      summary: Create a client instance
+      description: Authenticates a developer using customerId and apiKey to create a client instance in Sol.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                  example: "your-internal-customer-id"
+                apiKey:
+                  type: string
+                  example: "your-api-key"
+              required:
+                - customerId
+                - apiKey
+      responses:
+        '200':
+          description: Successful client creation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientId:
+                    type: string
+                    description: Unique ID for the created client instance
+                    example: "client-12345"
+
+  /tools:
+    get:
+      summary: List available tools
+      description: Fetches available tools in Sol, optionally filtered by apps.
+      parameters:
+        - in: query
+          name: apps
+          schema:
+            type: array
+            items:
+              type: string
+          description: Optional list of apps to filter tools by (e.g., google-calendar, gmail, github)
+      responses:
+        '200':
+          description: A list of available tools
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    toolId:
+                      type: string
+                      description: Unique ID of the tool
+                      example: "tool-6789"
+                    name:
+                      type: string
+                      description: Name of the tool
+                      example: "Create Email Draft"
+                    provider:
+                      type: string
+                      description: Provider of the tool (e.g., Gmail, Outlook)
+                      example: "Gmail"
+
+  /tools/{toolId}:
+    get:
+      summary: Get a specific tool
+      description: Fetches a specific tool by its ID from Sol.
+      parameters:
+        - in: path
+          name: toolId
+          schema:
+            type: string
+          required: true
+          description: The ID of the tool to retrieve
+      responses:
+        '200':
+          description: Details of the tool
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  toolId:
+                    type: string
+                    example: "tool-6789"
+                  name:
+                    type: string
+                    example: "Create Email Draft"
+                  provider:
+                    type: string
+                    example: "Gmail"
+                  description:
+                    type: string
+                    example: "Create a draft email with the given parameters."
+                  params:
+                    type: object
+                    properties:
+                      from_email:
+                        type: string
+                        example: "noreply@sol.com"
+                      to_email:
+                        type: string
+                        example: "melvin@sol.com"
+
+  /tools/{toolId}/execute:
+    post:
+      summary: Execute a tool
+      description: Executes the selected tool with the provided parameters in Sol.
+      parameters:
+        - in: path
+          name: toolId
+          schema:
+            type: string
+          required: true
+          description: The ID of the tool to execute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: object
+                  description: Parameters for tool execution
+                  example:
+                    from_email: "noreply@sol.com"
+                    to_email: "melvin@sol.com"
+                values:
+                  type: object
+                  description: Static values to override parameters
+                  example:
+                    subject: "Welcome to our service!"
+      responses:
+        '200':
+          description: Successful tool execution
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executionId:
+                    type: string
+                    description: Unique ID of the execution
+                    example: "exec-98765"
+                  status:
+                    type: string
+                    description: Status of the execution
+                    example: "completed"
+
+  /ai/integrate:
+    post:
+      summary: Integrate with an AI model
+      description: Integrates with an AI model (e.g., GPT-4) to generate responses and select tools in Sol.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                  description: AI model to use (e.g., gpt-4)
+                  example: "gpt-4"
+                messages:
+                  type: array
+                  description: List of messages for the AI model
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        example: "user"
+                      content:
+                        type: string
+                        example: "Draft an email welcoming Melvin to the platform."
+                tools:
+                  type: array
+                  description: Available tools for the AI to select from
+                  items:
+                    type: string
+                    example: "create_email_draft"
+                tool_choice:
+                  type: string
+                  description: How the AI should choose tools (e.g., auto)
+                  example: "auto"
+      responses:
+        '200':
+          description: AI response with selected tool(s)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseId:
+                    type: string
+                    example: "response-45678"
+                  tool_calls:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        toolId:
+                          type: string
+                          example: "tool-6789"
+                        params:
+                          type: object
+                          example:
+                            from_email: "noreply@sol.com"
+                            to_email: "melvin@sol.com"
+                  status:
+                    type: string
+                    example: "tools_selected"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
