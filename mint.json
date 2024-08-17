@@ -36,7 +36,7 @@
       "name": "API Reference",
       "url": "api-reference",
       "icon": "square-terminal",
-      "openapi": "sol-open-api-spec.yaml"
+      "openapi": "/sol-open-api-spec.yaml"
     },
     {
       "name": "Documentation",
