@@ -138,7 +138,7 @@ paths:
                   description: Parameters for tool execution
                   example:
                     from_email: "noreply@sol.com"
-                    to_email: "melvin@sol.com"
+                    to_email: "tara@sol.com"
                 values:
                   type: object
                   description: Static values to override parameters
@@ -186,7 +186,7 @@ paths:
                         example: "user"
                       content:
                         type: string
-                        example: "Draft an email welcoming Melvin to the platform."
+                        example: "Draft an email welcoming Tara to the platform."
                 tools:
                   type: array
                   description: Available tools for the AI to select from
@@ -220,7 +220,7 @@ paths:
                           type: object
                           example:
                             from_email: "noreply@sol.com"
-                            to_email: "melvin@sol.com"
+                            to_email: "tara@sol.com"
                   status:
                     type: string
                     example: "tools_selected"
