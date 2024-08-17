@@ -114,7 +114,7 @@ paths:
                         example: "noreply@sol.com"
                       to_email:
                         type: string
-                        example: "melvin@sol.com"
+                        example: "tara@sol.com"
 
   /tools/{toolId}/execute:
     post:
